@@ -32,6 +32,7 @@
     width: 70%;
     margin: 0 auto;
     height: 300px;
+    padding: 1em;
 }
 
 .ql-editor, .ql-toolbar {
@@ -51,6 +52,12 @@ h1 {
     color: #8FB399;
 }
 
+h2 {
+    color: #8FB399;
+    width: 70%;
+    margin: 0 auto;
+}
+
 button {
     background-color: #8FB399;
     border: none;
@@ -66,6 +73,37 @@ button {
 
 button:hover {
     background-color: #5C7362;
+}
+
+.documentInfo {
+    margin: 0 auto;
+    width: 50%;
+    color: #8FB399;
+}
+
+.documentInfo a {
+    color: #000;
+    text-decoration: none;
+}
+
+.documentInfo a:hover {
+    color: #8FB399;
+    text-decoration: underline;
+}
+
+.Options {
+    padding-top: 4em;
+}
+
+form, .Options {
+    width: 70%;
+    margin: 0 auto;
+}
+
+input {
+    width: -webkit-fill-available;
+    height: 50px;
+    font-size: 25px;
 }
 
 @keyframes App-logo-spin {
