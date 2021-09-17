@@ -19,7 +19,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test --coverage",
     "eject": "react-scripts eject",
-    "deploy": "npm run build && rsync -av --delete build/ jopn20@ssh.student.bth.se:www/editor"
+    "deploy": "npm run build && rsync -av --delete build/ jopn20@ssh.student.bth.se:www/editor",
+    "eslint": "eslint ."
   },
   "eslintConfig": {
     "extends": [
@@ -38,5 +39,10 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "eslint": "^7.32.0",
+    "eslint-plugin-react": "^7.25.2",
+    "javascript-style-guide": "^1.0.1"
   }
 }

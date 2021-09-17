@@ -31,7 +31,7 @@ function Update() {
             .catch(e => console.log(e));
 
         return function cancel() {
-            abortController.abort()
+            abortController.abort();
         };
     }, [id]);
 
@@ -41,14 +41,14 @@ function Update() {
 
     return (
         <div>
-        <h2>Titel</h2>
-        <form>
-            <input aria-label="cost-input" type="text" value={documentName} onChange={getName} />
-        </form>
-        <ReactQuill theme="snow" value={documentHtml || ''} onChange={setDocumentHtml}/>
-        <Options name={documentName} html={documentHtml} />
+            <h2>Titel</h2>
+            <form>
+                <input aria-label="cost-input" type="text" value={documentName} onChange={getName} />
+            </form>
+            <ReactQuill theme="snow" value={documentHtml || ''} onChange={setDocumentHtml}/>
+            <Options name={documentName} html={documentHtml} />
         </div>
-);
+    );
 }
 
 Update.propTypes = {

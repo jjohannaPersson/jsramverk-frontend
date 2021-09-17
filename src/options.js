@@ -17,6 +17,7 @@ function Options({ name, html }) {
     function updateDoc() {
         const controller = new AbortController();
         const signal = controller.signal;
+
         console.log(name);
         console.log(html);
         console.log(`${id}`);
@@ -35,9 +36,9 @@ function Options({ name, html }) {
             .then(data => {console.log(data);})
             .catch(e => console.log(e));
 
-    return function cancel() {
-        controller.abort()
-    };
+        return function cancel() {
+            controller.abort();
+        };
     }
 
     function createDoc() {
@@ -57,9 +58,9 @@ function Options({ name, html }) {
         })
             .catch(e => console.log(e));
 
-            return function cancel() {
-                controller.abort()
-            };
+        return function cancel() {
+            controller.abort();
+        };
     }
 
     return (

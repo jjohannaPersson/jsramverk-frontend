@@ -7,6 +7,7 @@ import OneDoc from "./getOne";
 
 function GetAll() {
     const [documentInfo, setDocumentInfo] = useState([]);
+
     console.log("Rendering");
 
     useEffect(() => {
@@ -22,25 +23,25 @@ function GetAll() {
             .catch(e => console.log(e));
 
         return function cancel() {
-            abortController.abort()
+            abortController.abort();
         };
     }, []);
 
     return (
-    <div className="documentInfo">
-    <h2>Välj ett dokument nedan för att läsa eller uppdatera</h2>
-        <ul>
-            {documentInfo.map((document, index) =>
-                <OneDoc key={index} document={document} />
-            )}
-        </ul>
-        <Link to="/create">
+        <div className="documentInfo">
+            <h2>Välj ett dokument nedan för att läsa eller uppdatera</h2>
+            <ul>
+                {documentInfo.map((document, index) =>
+                    <OneDoc key={index} document={document} />
+                )}
+            </ul>
+            <Link to="/create">
                 <button className="create">
-					Skapa nytt dokument
+                Skapa nytt dokument
                 </button>
             </Link>
-    </div>
-);
+        </div>
+    );
 }
 
 export default GetAll;
