@@ -1,6 +1,6 @@
 {
   "name": "my-app",
-  "version": "0.1.0",
+  "version": "2.0.0",
   "private": true,
   "homepage": ".",
   "dependencies": {
@@ -17,7 +17,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "react-scripts test --coverage",
     "eject": "react-scripts eject",
     "deploy": "npm run build && rsync -av --delete build/ jopn20@ssh.student.bth.se:www/editor"
   },
