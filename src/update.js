@@ -43,7 +43,7 @@ function Update() {
         <div>
         <h2>Titel</h2>
         <form>
-            <input type="text" value={documentName} onChange={getName} />
+            <input aria-label="cost-input" type="text" value={documentName} onChange={getName} />
         </form>
         <ReactQuill theme="snow" value={documentHtml || ''} onChange={setDocumentHtml}/>
         <Options name={documentName} html={documentHtml} />
