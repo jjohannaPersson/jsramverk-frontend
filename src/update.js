@@ -1,15 +1,49 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import ReactQuill from 'react-quill';
 import PropTypes from 'prop-types';
 import 'react-quill/dist/quill.snow.css';
 import './App.css';
 import Options from './options';
+import io from 'socket.io-client';
+
+const ENDPOINT = "https://jsramverk-editor-jopn20.azurewebsites.net";
 
 function Update() {
     const [documentName, setDocumentName] = useState('');
     const [documentHtml, setDocumentHtml] = useState('');
+    const [lastData, setLastData] = useState({});
+    const socketRef = useRef();
+    const quill = useRef(null);
+
+    useEffect(() => {
+        const socket = io.connect(ENDPOINT);
+
+        socketRef.current = socket;
+
+        return () => {
+            socket.removeAllListeners();
+            socket.disconnect();
+        };
+    }, []);
+
     const { id } = useParams();
+
+    const handleChange = (html, data) => {
+        if (!documentHtml) {
+            return;
+        }
+
+        setDocumentHtml(html);
+
+        if (JSON.stringify(lastData.ops) === JSON.stringify(data.ops)) {
+            return;
+        }
+
+        setLastData(data);
+
+        socketRef.current.emit("doc", data);
+    };
 
     useEffect(() => {
         if (!id) {
@@ -19,7 +53,7 @@ function Update() {
         const abortController = new AbortController();
         const signal = abortController.signal;
 
-        fetch(`https://jsramverk-editor-jopn20.azurewebsites.net/update/${id}`, {
+        fetch(`${ENDPOINT}/update/${id}`, {
             method: 'GET',
             signal: signal,
         })
@@ -30,8 +64,16 @@ function Update() {
             })
             .catch(e => console.log(e));
 
+        socketRef.current.emit("create", id);
+
+        socketRef.current.on("doc", function (data) {
+            setLastData(data);
+            quill.current.getEditor().updateContents(data);
+        });
+
         return function cancel() {
             abortController.abort();
+            socketRef.current.off('doc');
         };
     }, [id]);
 
@@ -39,14 +81,72 @@ function Update() {
         setDocumentName(event.target.value);
     }
 
+    function saveDoc() {
+        if (id) {
+            updateDoc();
+            return;
+        }
+        createDoc();
+    }
+
+    function updateDoc() {
+        const newHtml = quill.current.getEditor().editor.delta;
+        const controller = new AbortController();
+        const signal = controller.signal;
+
+        fetch(`${ENDPOINT}/update/${id}`, {
+            method: 'PUT',
+            signal: signal,
+            headers: {
+                "Content-type": "application/json; charset=UTF-8"
+            },
+            body: JSON.stringify({
+                name: documentName,
+                html: newHtml
+            })
+        })
+            .then(data => {console.log(data);})
+            .catch(e => console.log(e));
+
+        return function cancel() {
+            controller.abort();
+        };
+    }
+
+    function createDoc() {
+        const newHtml = quill.current.getEditor().editor.delta;
+        const controller = new AbortController();
+        const signal = controller.signal;
+
+        fetch(`${ENDPOINT}/create`, {
+            method: "POST",
+            signal: signal,
+            body: JSON.stringify({
+                name: documentName,
+                html: newHtml
+            }),
+            headers: {
+                "Content-type": "application/json; charset=UTF-8"
+            }
+        })
+            .catch(e => console.log(e));
+
+        return function cancel() {
+            controller.abort();
+        };
+    }
+
+
     return (
         <div>
             <h2>Titel</h2>
             <form>
-                <input aria-label="cost-input" type="text" value={documentName} onChange={getName} />
+                <input aria-label="cost-input" type="text"
+                    value={documentName} onChange={getName} />
             </form>
-            <ReactQuill theme="snow" value={documentHtml || ''} onChange={setDocumentHtml}/>
-            <Options name={documentName} html={documentHtml} />
+            <ReactQuill ref={quill} theme="snow" value={documentHtml || ''}
+                onChange={handleChange}/>
+            <Options save={saveDoc} />
         </div>
     );
 }

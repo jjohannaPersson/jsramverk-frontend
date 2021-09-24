@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import ReactQuill from 'react-quill';
+import React from "react";
+// import ReactQuill from 'react-quill';
 import {
     HashRouter as Router,
     Switch,
@@ -12,8 +12,6 @@ import Update from './update.js';
 // import Options from './options.js';
 
 function App() {
-    const [value, setValue] = useState('');
-
     return (
         <div>
             <header>
