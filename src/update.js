@@ -9,9 +9,10 @@ import io from 'socket.io-client';
 
 const ENDPOINT = "https://jsramverk-editor-jopn20.azurewebsites.net";
 
-function Update() {
+function Update({ token, userEmail }) {
     const [documentName, setDocumentName] = useState('');
     const [documentHtml, setDocumentHtml] = useState('');
+    const [documentUsers, setDocumentUsers] = useState([]);
     const [lastData, setLastData] = useState({});
     const socketRef = useRef();
     const quill = useRef(null);
@@ -56,11 +57,15 @@ function Update() {
         fetch(`${ENDPOINT}/update/${id}`, {
             method: 'GET',
             signal: signal,
+            headers: {
+                "Authorization": `Token ${token}`
+            }
         })
             .then(res => res.json())
             .then(res => {
                 setDocumentName(res.name);
                 setDocumentHtml(res.html);
+                setDocumentUsers(res.allowed_users);
             })
             .catch(e => console.log(e));
 
@@ -83,10 +88,15 @@ function Update() {
 
     function saveDoc() {
         if (id) {
-            updateDoc();
-            return;
+            if (documentUsers.includes(userEmail)) {
+                updateDoc();
+                return;
+            } else {
+                alert("Du har inte tillåtelse att redigera detta dokument!");
+            }
+        } else {
+            createDoc();
         }
-        createDoc();
     }
 
     function updateDoc() {
@@ -98,7 +108,8 @@ function Update() {
             method: 'PUT',
             signal: signal,
             headers: {
-                "Content-type": "application/json; charset=UTF-8"
+                "Content-type": "application/json; charset=UTF-8",
+                "Authorization": `Token ${token}`
             },
             body: JSON.stringify({
                 name: documentName,
@@ -123,12 +134,40 @@ function Update() {
             signal: signal,
             body: JSON.stringify({
                 name: documentName,
-                html: newHtml
+                html: newHtml,
+                allowed_users: []
             }),
             headers: {
-                "Content-type": "application/json; charset=UTF-8"
+                "Content-type": "application/json; charset=UTF-8",
+                "Authorization": `Token ${token}`
             }
         })
+            .catch(e => console.log(e));
+
+        return function cancel() {
+            controller.abort();
+        };
+    }
+
+    function getAccess() {
+        const controller = new AbortController();
+        const signal = controller.signal;
+
+        fetch(`${ENDPOINT}/update/${id}`, {
+            method: 'PUT',
+            signal: signal,
+            headers: {
+                "Content-type": "application/json; charset=UTF-8"
+            },
+            body: JSON.stringify({
+                allowed_users: userEmail
+            })
+        })
+            .then(data => {
+                console.log(data);
+                setDocumentUsers(userEmail);
+                alert("Nu kan du redigera i dokumentet!");
+            })
             .catch(e => console.log(e));
 
         return function cancel() {
@@ -146,14 +185,13 @@ function Update() {
             </form>
             <ReactQuill ref={quill} theme="snow" value={documentHtml || ''}
                 onChange={handleChange}/>
-            <Options save={saveDoc} />
+            <Options save={saveDoc} getAccess={getAccess} />
         </div>
     );
 }
 
 Update.propTypes = {
-    documentName: PropTypes.string,
-    documentHtml: PropTypes.string,
+    token: PropTypes.string.isRequired,
 };
 
 export default Update;

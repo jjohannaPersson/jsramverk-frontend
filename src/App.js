@@ -1,5 +1,4 @@
-import React from "react";
-// import ReactQuill from 'react-quill';
+import React, { useState } from "react";
 import {
     HashRouter as Router,
     Switch,
@@ -9,25 +8,55 @@ import 'react-quill/dist/quill.snow.css';
 import './App.css';
 import GetAll from './getAll.js';
 import Update from './update.js';
-// import Options from './options.js';
+import Header from './header.js';
+import Login from './login.js';
+import Register from './register.js';
 
 function App() {
+    const [token, setToken] = useState();
+    const [userEmail, setuserEmail] = useState();
+    const logout = () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('email');
+        setToken(undefined);
+        setuserEmail(undefined);
+    };
+
+    const savedToken = localStorage.getItem('token');
+    const savedEmail = localStorage.getItem('email');
+
+    if (!token && savedToken) {
+        setToken(savedToken);
+        setuserEmail(savedEmail);
+    }
+
     return (
         <div>
-            <header>
-                <h1>JSramverk</h1>
-            </header>
             <Router>
+                <Header token={token} logout={logout}/>
                 <Switch>
-                    <Route exact path="/">
-                        <GetAll />
-                    </Route>
-                    <Route exact path="/update/:id">
-                        <Update />
-                    </Route>
-                    <Route exact path="/create">
-                        <Update />
-                    </Route>
+                    {token ?
+                        <>
+                            <Route exact path="/">
+                                <GetAll token={token} />
+                            </Route>
+                            <Route exact path="/update/:id">
+                                <Update token={token} userEmail={userEmail} />
+                            </Route>
+                            <Route exact path="/create">
+                                <Update token={token} />
+                            </Route>
+                        </>
+                        :
+                        <>
+                            <Route exact path="/">
+                                <Login setToken={setToken} setuserEmail={setuserEmail} />
+                            </Route>
+                            <Route exact path="/signup">
+                                <Register />
+                            </Route>
+                        </>
+                    }
                 </Switch>
             </Router>
         </div>

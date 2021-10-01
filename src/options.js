@@ -3,7 +3,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import PropTypes from 'prop-types';
 
-function Options({ save }) {
+function Options({ save, getAccess }) {
     return (
         <div className="Options">
             <button
@@ -15,6 +15,10 @@ function Options({ save }) {
 					Tillbaka
                 </button>
             </Link>
+            <button
+                onClick={getAccess}
+            >Få tillstånd att redigera i dokumentet
+            </button>
         </div>
     );
 }

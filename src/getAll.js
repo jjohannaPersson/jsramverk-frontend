@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from "react";
-// import ReactQuill from 'react-quill';
 import { Link } from "react-router-dom";
 import 'react-quill/dist/quill.snow.css';
 import './App.css';
 import OneDoc from "./getOne";
+import PropTypes from 'prop-types';
 
-function GetAll() {
+function GetAll({ token }) {
     const [documentInfo, setDocumentInfo] = useState([]);
-
-    console.log("Rendering");
 
     useEffect(() => {
         const abortController = new AbortController();
@@ -17,6 +15,9 @@ function GetAll() {
         fetch('https://jsramverk-editor-jopn20.azurewebsites.net/', {
             method: 'GET',
             signal: signal,
+            headers: {
+                "Authorization": `Token ${token}`
+            }
         })
             .then(res => res.json())
             .then(res => setDocumentInfo(res))
@@ -43,5 +44,9 @@ function GetAll() {
         </div>
     );
 }
+
+GetAll.propTypes = {
+    token: PropTypes.string.isRequired,
+};
 
 export default GetAll;
