@@ -54,7 +54,7 @@ function Register() {
                     <label htmlFor="email">
                         Email:
                     </label>
-                    <input className="input" value={email}
+                    <input aria-label="e-input" className="input" value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         name="email" type ="email" />
                 </div>

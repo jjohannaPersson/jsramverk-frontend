@@ -7,20 +7,20 @@ test('Renders the headline JSramverk', () => {
     expect(screen.getByText('JSramverk')).toBeInTheDocument();
 });
 
-test('If the button "Skapa nytt dokument" renders editor', () => {
+test('If the link "registrera dig!" renders form', () => {
     const { container } = render(<App />);
 
-    const button = screen.getByText('Skapa nytt dokument');
+    const button = screen.getByText('registrera dig!');
 
     fireEvent.click(button);
-    expect(screen.getByText('Titel')).toBeInTheDocument();
-    expect(screen.getByText('Spara')).toBeInTheDocument();
-    expect(screen.getByText('Tillbaka')).toBeInTheDocument();
+    expect(screen.getByText('Registrera')).toBeInTheDocument();
+    expect(screen.getByText('Email:')).toBeInTheDocument();
+    expect(screen.getByText('Lösenord:')).toBeInTheDocument();
 });
 
-test('If title is empty when creating a new document', () => {
+test('If email is empty when signing up', () => {
     const container = render(<App />);
-    const input = container.getByLabelText('cost-input');
+    const input = container.getByLabelText('e-input');
 
     expect(input.value).toBe("");
 });
