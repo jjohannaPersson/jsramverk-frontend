@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Link, useHistory } from "react-router-dom";
-// import './Form.css';
 
 const ENDPOINT = "https://jsramverk-editor-jopn20.azurewebsites.net";
 

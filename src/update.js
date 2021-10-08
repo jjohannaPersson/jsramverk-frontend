@@ -100,7 +100,7 @@ function Update({ token, userEmail }) {
     }
 
     function updateDoc() {
-        const newHtml = quill.current.getEditor().editor.delta;
+        const newHtml = quill.current.getEditor().editor.delta.ops[0].insert;
         const controller = new AbortController();
         const signal = controller.signal;
 
@@ -125,7 +125,7 @@ function Update({ token, userEmail }) {
     }
 
     function createDoc() {
-        const newHtml = quill.current.getEditor().editor.delta;
+        const newHtml = quill.current.getEditor().editor.delta.ops[0].insert;
         const controller = new AbortController();
         const signal = controller.signal;
 
