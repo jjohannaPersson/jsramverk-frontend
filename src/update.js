@@ -6,6 +6,8 @@ import 'react-quill/dist/quill.snow.css';
 import './App.css';
 import Options from './options';
 import io from 'socket.io-client';
+import { pdfExporter } from 'quill-to-pdf';
+import { saveAs } from 'file-saver';
 
 const ENDPOINT = "https://jsramverk-editor-jopn20.azurewebsites.net";
 
@@ -175,6 +177,13 @@ function Update({ token, userEmail }) {
         };
     }
 
+    async function exportPdf() {
+        const delta = quill.current.getEditor().editor.delta;  // gets the Quill delta
+        const pdfAsBlob = await pdfExporter.generatePdf(delta); // converts to PDF
+
+        saveAs(pdfAsBlob, `${documentName}.pdf`); // downloads from the browser
+    }
+
 
     return (
         <div>
@@ -185,7 +194,7 @@ function Update({ token, userEmail }) {
             </form>
             <ReactQuill ref={quill} theme="snow" value={documentHtml || ''}
                 onChange={handleChange}/>
-            <Options save={saveDoc} getAccess={getAccess} />
+            <Options save={saveDoc} getAccess={getAccess} pdf={exportPdf}/>
         </div>
     );
 }
