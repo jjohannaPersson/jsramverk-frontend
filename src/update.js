@@ -184,6 +184,27 @@ function Update({ token, userEmail }) {
         saveAs(pdfAsBlob, `${documentName}.pdf`); // downloads from the browser
     }
 
+    function sendMail(mail) {
+        const controller = new AbortController();
+        const signal = controller.signal;
+
+        console.log(`Frontend skickar mejl till: ${mail}`);
+
+        fetch(`${ENDPOINT}/mail/send/${mail}`, {
+            method: 'GET',
+            signal: signal,
+            headers: {
+                "Content-type": "application/json; charset=UTF-8"
+            }
+        })
+            .then(res => res.json())
+            .catch(e => console.log(e));
+
+        return function cancel() {
+            controller.abort();
+        };
+    }
+
 
     return (
         <div>
@@ -194,7 +215,8 @@ function Update({ token, userEmail }) {
             </form>
             <ReactQuill ref={quill} theme="snow" value={documentHtml || ''}
                 onChange={handleChange}/>
-            <Options save={saveDoc} getAccess={getAccess} pdf={exportPdf}/>
+            <Options save={saveDoc} getAccess={getAccess} pdf={exportPdf}
+                sendMail={sendMail} id={id}/>
         </div>
     );
 }
