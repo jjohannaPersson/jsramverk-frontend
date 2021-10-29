@@ -3,17 +3,8 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import PropTypes from 'prop-types';
 
-function Options({ save, getAccess, pdf, sendMail, id }) {
+function Options({ save, getAccess, pdf, sendMail }) {
     const [invited, setinvited] = useState('');
-
-    function invite() {
-        if (id !== null && invited !== "") {
-            sendMail(invited);
-            alert("Inbjudan skickad!");
-        } else {
-            alert("Du måste fylla i en mejladress innan du skickar inbjudan!");
-        }
-    }
 
     return (
         <div className="Options">
@@ -33,6 +24,7 @@ function Options({ save, getAccess, pdf, sendMail, id }) {
 
             <button
                 onClick={pdf}
+                data-testid="pdf"
             >Skapa PDF
             </button>
 
@@ -41,7 +33,7 @@ function Options({ save, getAccess, pdf, sendMail, id }) {
                 <input type="email" placeholder="Email" value={invited}
                     onChange={(event) => setinvited(event?.target.value)} />
                 <button
-                    onClick={() => invite()}
+                    onClick={() => sendMail(invited)}
                 >Skicka inbjudan
                 </button>
             </div>

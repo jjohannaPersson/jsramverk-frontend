@@ -16,6 +16,8 @@ function Update({ token, userEmail }) {
     const [documentHtml, setDocumentHtml] = useState('');
     const [documentUsers, setDocumentUsers] = useState([]);
     const [lastData, setLastData] = useState({});
+    const [popup, showPopup] = useState(false);
+    const [popupText, setPopupText] = useState("");
     const socketRef = useRef();
     const quill = useRef(null);
 
@@ -168,7 +170,9 @@ function Update({ token, userEmail }) {
             .then(data => {
                 console.log(data);
                 setDocumentUsers(userEmail);
-                alert("Nu kan du redigera i dokumentet!");
+                showPopup(true);
+                setPopupText("Nu kan du redigera i dokumentet!");
+                // alert("Nu kan du redigera i dokumentet!");
             })
             .catch(e => console.log(e));
 
@@ -178,6 +182,8 @@ function Update({ token, userEmail }) {
     }
 
     async function exportPdf() {
+        showPopup(true);
+        setPopupText("Du har nu skapat en pdf!");
         const delta = quill.current.getEditor().editor.delta;  // gets the Quill delta
         const pdfAsBlob = await pdfExporter.generatePdf(delta); // converts to PDF
 
@@ -197,8 +203,13 @@ function Update({ token, userEmail }) {
                 "Content-type": "application/json; charset=UTF-8"
             }
         })
-            .then(res => res.json())
+            .then(res => {
+                res.json();
+            })
             .catch(e => console.log(e));
+
+        showPopup(true);
+        setPopupText("Du har nu skickat en inbjudan!");
 
         return function cancel() {
             controller.abort();
@@ -216,7 +227,18 @@ function Update({ token, userEmail }) {
             <ReactQuill ref={quill} theme="snow" value={documentHtml || ''}
                 onChange={handleChange}/>
             <Options save={saveDoc} getAccess={getAccess} pdf={exportPdf}
-                sendMail={sendMail} id={id}/>
+                sendMail={sendMail}/>
+            <div
+                className={
+                    popup ? "block" : "hidden"
+                }
+                onClick={() => showPopup(false)}
+            >
+                <div className="block-content">
+                    <span className="close">&times;</span>
+                    <p>{popupText}</p>
+                </div>
+            </div>
         </div>
     );
 }
